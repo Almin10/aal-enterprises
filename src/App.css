@@ -3256,3 +3256,20 @@ img {
     margin: 0 !important;
   }
 }
+
+
+/* AAL Enterprises - Brand font refinement */
+.brand strong {
+  font-size: 15px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.3px;
+  line-height: 1.2 !important;
+}
+
+.brand span {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.1px;
+  line-height: 1.4 !important;
+}
+

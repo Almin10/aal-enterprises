@@ -638,7 +638,7 @@ if (!loggedIn) {
 
               <span>ENTERPRISES</span>
 
-              <small>WHOLESALE &amp; ELECTRONICS</small>
+              <small>Online Wholesale Market</small>
 
             </div>
 
@@ -890,7 +890,7 @@ if (!loggedIn) {
 
             <strong>AAL Enterprises</strong>
 
-            <span>Wholesale &amp; Electronics</span>
+            <small>Online Wholesale Market</small>
 
           </div>
 
