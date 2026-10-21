@@ -34,6 +34,10 @@ function App() {
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  const [detailsImageIndex, setDetailsImageIndex] = useState(0);
+
+  const [detailsProduct, setDetailsProduct] = useState(null);
+
   const [quantity, setQuantity] = useState(1);
 
   const [cart, setCart] = useState([]);
@@ -204,6 +208,12 @@ async function loadMyOrders() {
 
   }
 
+
+function openProductDetails(product) {
+  setDetailsProduct(product);
+  setDetailsImageIndex(0);
+  setMessage("");
+}
   function addToCart(product) {
 
     if (Number(product.stockQty) <= 0) {
@@ -790,6 +800,129 @@ if (!loggedIn) {
 
 <main className="store-page">
 
+        {detailsProduct && activePage === "catalogue" && (
+        <section className="catalogue product-details-page">
+          <button
+            className="outline-button"
+            onClick={() => setDetailsProduct(null)}
+          >
+            ← Back to Catalogue
+          </button>
+
+          <div className="product-details-layout">
+           
+<div className="product-details-image">
+  {(() => {
+    const galleryImages =
+      Array.isArray(detailsProduct.galleryImages) &&
+      detailsProduct.galleryImages.length
+        ? detailsProduct.galleryImages
+        : detailsProduct.imageUrl
+          ? [detailsProduct.imageUrl]
+          : [];
+
+    const safeIndex = Math.min(
+      detailsImageIndex,
+      Math.max(galleryImages.length - 1, 0)
+    );
+
+    return galleryImages.length > 0 ? (
+      <>
+        <div className="details-main-image">
+          <img
+            src={getDisplayImageUrl(galleryImages[safeIndex])}
+            alt={detailsProduct.itemName}
+            referrerPolicy="no-referrer"
+          />
+          
+        </div>
+
+        {galleryImages.length > 1 && (
+          <div className="details-gallery-thumbnails">
+            {galleryImages.map((image, index) => (
+              <button
+                type="button"
+                key={`${image}-${index}`}
+                className={`details-gallery-thumb ${
+                  safeIndex === index ? "active" : ""
+                }`}
+                onClick={() => setDetailsImageIndex(index)}
+                aria-label={`View image ${index + 1}`}
+                aria-pressed={safeIndex === index}
+              >
+                <img
+                  src={getDisplayImageUrl(image)}
+                  alt={`${detailsProduct.itemName} ${index + 1}`}
+                  referrerPolicy="no-referrer"
+                />
+                <span>{index + 1}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </>
+    ) : (
+      <div className="product-image-placeholder">
+        Image unavailable
+      </div>
+    );
+  })()}
+</div>
+
+            </div>
+
+            <div className="product-details-info">
+              <p className="product-id-label details-product-id">
+  Product ID: {detailsProduct.productId}
+</p>
+              <p className="eyebrow">
+                {detailsProduct.category || "PRODUCT DETAILS"}
+              </p>
+
+              <h1>{detailsProduct.itemName}</h1>
+
+              <p>
+                {detailsProduct.description ||
+                  "Quality product from AAL Enterprises."}
+              </p>
+
+              <h2>
+                ₹{Number(detailsProduct.retailPrice || 0).toLocaleString("en-IN")}
+              </h2>
+
+              <p>
+                Availability:{" "}
+                {Number(detailsProduct.stockQty || 0) > 0
+                  ? `${detailsProduct.stockQty} available`
+                  : "Out of stock"}
+              </p>
+
+              {Number(detailsProduct.stockQty || 0) > 0 ? (
+                <button
+                  className="cart-add-button"
+                  onClick={() => addToCart(detailsProduct)}
+                >
+                  + Add to Cart
+                </button>
+              ) : null}
+
+              <button
+                className="primary-button"
+                onClick={() => {
+                  setSelectedProduct(detailsProduct);
+                  setQuantity(1);
+                  setMessage("");
+                }}
+              >
+                {Number(detailsProduct.stockQty || 0) > 0
+                  ? "Request order"
+                  : "Request stock"}
+              </button>
+
+            </div>
+        </section>
+         )}
+
       {activePage === "myOrders" && (
 
         <section className="catalogue my-orders-page">
@@ -951,7 +1084,7 @@ if (!loggedIn) {
 
       )}
 
-      {activePage !== "myOrders" && (
+      {activePage !== "myOrders" && !detailsProduct && (
 
       <section className="welcome-banner">
 
@@ -1063,9 +1196,8 @@ if (!loggedIn) {
 
       {message && <p className="message">{message}</p>}
 
-      {activePage !== "myOrders" && (
-
-      <section className="catalogue">
+      {activePage !== "myOrders" && !detailsProduct && (
+  <section className="catalogue">
 
         <div className="section-heading">
 
@@ -1114,6 +1246,8 @@ if (!loggedIn) {
 referrerPolicy="no-referrer"
 
   alt={product.itemName}
+  onClick={() => openProductDetails(product)}
+style={{ cursor: "pointer" }}
 
 onError={(e) => {
 
@@ -1179,15 +1313,28 @@ onError={(e) => {
 
                 <div className="product-info">
 
-                  <p className="category-label">{product.category}</p>
 
-                  <h3>{product.itemName}</h3>
+<p className="category-label">{product.category}</p>
 
-                  <p className="product-description">
+<h3
+  className="product-title-clickable"
+  onClick={() => openProductDetails(product)}
+  role="button"
+  tabIndex={0}
+  onKeyDown={(event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openProductDetails(product);
+    }
+  }}
+>
+  {product.itemName}
+</h3>
 
-                    {product.description || "Quality product from AAL Enterprises."}
-
-                  </p>
+<p className="product-id">
+  Product ID: {product.productId}
+</p>
+          
 
                   <div className="price-row">
 
