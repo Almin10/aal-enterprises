@@ -3556,3 +3556,1186 @@ img {
 .product-details-page .gallery-image-count {
   display: none !important;
 }
+
+
+/* AAL Enterprises — Professional Order Success Card */
+
+.aal-success-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: min(100% - 40px, 1288px);
+  margin: 18px auto;
+  padding: 22px 54px 22px 22px;
+  border: 1px solid #b9dfc7;
+  border-left: 5px solid #16834a;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f1fbf4 0%, #ffffff 100%);
+  box-shadow: 0 5px 18px rgba(15, 80, 46, 0.07);
+  color: #173d29;
+  box-sizing: border-box;
+  animation: aal-success-appear 0.3s ease-out;
+}
+
+.aal-success-icon {
+  display: flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #16834a;
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: 800;
+  box-shadow: 0 3px 9px rgba(22, 131, 74, 0.2);
+}
+
+.aal-success-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.aal-success-label {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: #9a7400;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+}
+
+.aal-success-content h3 {
+  margin: 0 0 7px;
+  color: #125b35;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.aal-success-content > p {
+  margin: 0;
+  color: #4b6655;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.aal-order-references {
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid #dceee1;
+}
+
+.aal-reference-title {
+  display: block;
+  margin-bottom: 8px;
+  color: #577362;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.aal-reference-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.aal-reference-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #c8e5d0;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #17683d;
+  font-size: 12px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.aal-success-close {
+  position: absolute;
+  top: 12px;
+  right: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #52715d;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.aal-success-close:hover {
+  background: #e0f2e5;
+  color: #125b35;
+}
+
+@keyframes aal-success-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .aal-success-card {
+    width: calc(100% - 24px);
+    margin: 12px auto;
+    padding: 17px 38px 17px 14px;
+    gap: 11px;
+    border-radius: 12px;
+  }
+
+  .aal-success-icon {
+    flex-basis: 35px;
+    width: 35px;
+    height: 35px;
+    font-size: 21px;
+  }
+
+  .aal-success-content h3 {
+    font-size: 17px;
+  }
+
+  .aal-success-content > p {
+    font-size: 12px;
+  }
+
+  .aal-reference-badge {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .aal-success-close {
+    top: 8px;
+    right: 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aal-success-card {
+    animation: none;
+  }
+}
+
+/* AAL Enterprises — Flying Add to Cart Animation */
+
+.cart-header-button {
+  position: relative;
+  transform-origin: center;
+}
+
+.cart-header-button.cart-fly-bounce {
+  animation: aal-cart-bounce 450ms ease-out;
+  box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.22);
+}
+
+@keyframes aal-cart-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.12);
+    box-shadow: 0 0 18px rgba(255, 204, 0, 0.75);
+  }
+
+  65% {
+    transform: scale(0.96);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-header-button.cart-fly-bounce {
+    animation: none;
+  }
+}
+
+
+/* Compact AAL Enterprises Add-to-Cart Toast */
+
+.aal-cart-toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border: 1px solid #b9dfc7;
+  border-left: 4px solid #16834a;
+  border-radius: 11px;
+  background: #f4fbf5;
+  color: #125b35;
+  box-shadow: 0 8px 26px rgba(15, 80, 46, 0.15);
+  animation: aal-toast-enter 250ms ease-out;
+  box-sizing: border-box;
+}
+
+.aal-cart-toast-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 29px;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  background: #16834a;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.aal-cart-toast-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.aal-cart-toast-text strong {
+  color: #125b35;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.aal-cart-toast-text span {
+  overflow: hidden;
+  color: #55715f;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes aal-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .aal-cart-toast {
+    right: 12px;
+    bottom: 12px;
+    max-width: calc(100vw - 24px);
+    padding: 10px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aal-cart-toast {
+    animation: none;
+  }
+}
+
+
+/* AAL Enterprises — My Orders UI */
+
+.my-order-card {
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid #e3eadf;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(25, 65, 35, 0.06);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.my-order-card:hover {
+  border-color: #b9d9b7;
+  box-shadow: 0 8px 22px rgba(25, 65, 35, 0.1);
+}
+
+.my-order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9eee5;
+  background: linear-gradient(110deg, #f1f9ef, #fffdf2);
+}
+
+.my-order-reference {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.my-order-label {
+  color: #75836f;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.my-order-reference strong {
+  overflow-wrap: anywhere;
+  color: #176338;
+  font-size: 13px;
+}
+
+.my-order-status {
+  flex-shrink: 0;
+  padding: 6px 11px;
+  border: 1px solid #e8d28b;
+  border-radius: 20px;
+  background: #fff5cd;
+  color: #795900;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.my-order-status.status-approved,
+.my-order-status.status-completed {
+  border-color: #b9dfc7;
+  background: #e9f8ee;
+  color: #16713d;
+}
+
+.my-order-status.status-rejected {
+  border-color: #f0c3c3;
+  background: #fff0f0;
+  color: #b42323;
+}
+
+.my-order-product {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+}
+
+.my-order-product-icon {
+  display: flex;
+  flex: 0 0 46px;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #f1f7e9;
+  font-size: 23px;
+}
+
+.my-order-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-order-product-info h3 {
+  margin: 0 0 7px;
+  color: #263b2d;
+  font-size: 15px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.my-order-product-info p {
+  margin: 0;
+  color: #718071;
+  font-size: 12px;
+}
+
+.my-order-product-info p strong {
+  color: #3d5942;
+}
+
+.my-order-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.my-order-price span,
+.my-order-customer span {
+  color: #7b877b;
+  font-size: 11px;
+}
+
+.my-order-price strong {
+  color: #176338;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.my-order-customer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 14px 20px;
+  border-top: 1px solid #edf0e9;
+  background: #fcfdfb;
+}
+
+.my-order-customer > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.my-order-customer strong {
+  color: #3b4e3d;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .my-order-header {
+    padding: 13px;
+  }
+
+  .my-order-product {
+    gap: 10px;
+    padding: 15px 13px;
+  }
+
+  .my-order-product-icon {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  .my-order-product-info h3 {
+    font-size: 13px;
+  }
+
+  .my-order-price strong {
+    font-size: 15px;
+  }
+
+  .my-order-customer {
+    gap: 10px;
+    padding: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-order-card {
+    transition: none;
+  }
+}
+
+/* My Orders — Total Value */
+.my-order-total-label {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e3eadf;
+  color: #176338;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.my-order-price .my-order-total-value {
+  color: #176338;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+/* Mobile layout fix */
+@media (max-width: 520px) {
+  .my-order-product {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .my-order-product-info {
+    flex: 1 1 120px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .my-order-price {
+    flex: 0 0 auto;
+    max-width: 115px;
+  }
+
+  .my-order-product-info h3 {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .my-order-header {
+    align-items: center;
+  }
+
+  .my-order-reference {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .my-order-status {
+    white-space: nowrap;
+  }
+}
+
+/* AAL My Orders — Mobile: One Order Per Row */
+
+@media (max-width: 520px) {
+  /* Show one order card per row */
+  .product-grid:has(.my-order-card) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
+    width: 100%;
+  }
+
+  .my-order-card {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  /* Keep Order ID and status on one clean row */
+  .my-order-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .my-order-reference {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .my-order-reference strong {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .my-order-status {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Desktop-like product layout */
+  .my-order-product {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .my-order-product-icon {
+    flex: 0 0 38px;
+  }
+
+  .my-order-product-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .my-order-product-info h3 {
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .my-order-price {
+    flex: 0 0 auto;
+    max-width: 110px;
+    text-align: right;
+  }
+
+  .my-order-price strong {
+    font-size: 16px;
+  }
+
+  .my-order-price .my-order-total-value {
+    font-size: 18px;
+  }
+
+  /* Customer details */
+  .my-order-customer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* ========================================
+   AAL ENTERPRISES — FUTURISTIC JARVIS LOADER
+   ======================================== */
+
+.jarvis-loader {
+  --jarvis-green: #087847;
+  --jarvis-deep-green: #063d2b;
+  --jarvis-yellow: #f2c94c;
+
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse at 50% 42%,
+      rgba(12, 130, 79, 0.12),
+      transparent 42%
+    ),
+    #f7f8f3;
+  color: var(--jarvis-deep-green);
+  font-family: inherit;
+}
+
+.jarvis-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(8, 120, 71, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 120, 71, 0.07) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse, black 10%, transparent 78%);
+}
+
+.jarvis-loader-content {
+  width: min(90%, 390px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: jarvis-appear 0.65s ease both;
+}
+
+.jarvis-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #577367;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.jarvis-status > span:not(.jarvis-status-dot) {
+  color: #c49a19;
+}
+
+.jarvis-status-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #15a66b;
+  box-shadow: 0 0 12px rgba(21, 166, 107, 0.6);
+  animation: jarvis-blink 1.5s ease-in-out infinite;
+}
+
+.jarvis-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 210px;
+  height: 210px;
+  margin: 38px 0 30px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(8, 120, 71, 0.08),
+    transparent 68%
+  );
+}
+
+.jarvis-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.jarvis-ring-outer {
+  inset: 2px;
+  border: 1px dashed rgba(8, 120, 71, 0.48);
+  border-top: 2px solid var(--jarvis-green);
+  border-bottom: 2px solid var(--jarvis-yellow);
+  animation: jarvis-spin 12s linear infinite;
+}
+
+.jarvis-ring-middle {
+  inset: 17px;
+  border: 2px solid rgba(8, 120, 71, 0.15);
+  border-left: 2px solid var(--jarvis-yellow);
+  border-right: 2px solid var(--jarvis-green);
+  box-shadow: 0 0 18px rgba(8, 120, 71, 0.08);
+  animation: jarvis-spin-reverse 7s linear infinite;
+}
+
+.jarvis-ring-inner {
+  inset: 34px;
+  border: 1px solid rgba(8, 120, 71, 0.3);
+  box-shadow: inset 0 0 22px rgba(8, 120, 71, 0.06);
+  animation: jarvis-pulse 2.4s ease-in-out infinite;
+}
+
+.jarvis-core-logo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 91px;
+  height: 91px;
+  border: 1px solid rgba(8, 120, 71, 0.28);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #edf6e9);
+  box-shadow:
+    0 0 24px rgba(8, 120, 71, 0.12),
+    inset 0 0 18px rgba(8, 120, 71, 0.05);
+}
+
+.jarvis-core-logo > span {
+  color: var(--jarvis-deep-green);
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 0 0 14px rgba(8, 120, 71, 0.12);
+}
+
+.jarvis-core-logo > small {
+  margin-top: 3px;
+  color: #9b7812;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.jarvis-scan-line {
+  position: absolute;
+  z-index: 3;
+  top: 17%;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(8, 120, 71, 0.1),
+    var(--jarvis-green),
+    var(--jarvis-yellow),
+    transparent
+  );
+  box-shadow: 0 0 12px rgba(8, 120, 71, 0.35);
+  animation: jarvis-scan 3s ease-in-out infinite;
+}
+
+.jarvis-title {
+  margin: 0;
+  color: var(--jarvis-deep-green);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+}
+
+.jarvis-description {
+  margin: 11px 0 22px;
+  color: #71847a;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+.jarvis-progress {
+  width: min(100%, 260px);
+  height: 4px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(8, 120, 71, 0.12);
+}
+
+.jarvis-progress-fill {
+  width: 35%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--jarvis-green),
+    #22a56c,
+    var(--jarvis-yellow)
+  );
+  box-shadow: 0 0 12px rgba(8, 120, 71, 0.3);
+  animation: jarvis-progress 2s ease-in-out infinite;
+}
+
+.jarvis-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100%, 260px);
+  margin-top: 12px;
+  color: #829087;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.jarvis-live {
+  color: var(--jarvis-green);
+}
+
+.jarvis-appear {
+  animation: jarvis-appear 0.65s ease both;
+}
+
+@keyframes jarvis-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes jarvis-spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes jarvis-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+@keyframes jarvis-scan {
+  0% {
+    top: 16%;
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 84%;
+    opacity: 0;
+  }
+}
+
+@keyframes jarvis-progress {
+  0% {
+    transform: translateX(-110%);
+  }
+
+  100% {
+    transform: translateX(390%);
+  }
+}
+
+@keyframes jarvis-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes jarvis-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .jarvis-loader-content {
+    width: 88%;
+  }
+
+  .jarvis-core {
+    width: 184px;
+    height: 184px;
+    margin: 30px 0 26px;
+  }
+
+  .jarvis-core-logo {
+    width: 79px;
+    height: 79px;
+  }
+
+  .jarvis-core-logo > span {
+    font-size: 24px;
+  }
+
+  .jarvis-title {
+    font-size: 14px;
+    letter-spacing: 1.8px;
+  }
+
+  .jarvis-status {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-loader-content,
+  .jarvis-ring,
+  .jarvis-scan-line,
+  .jarvis-status-dot,
+  .jarvis-progress-fill {
+    animation: none !important;
+  }
+
+  .jarvis-progress-fill {
+    width: 65%;
+    transform: none;
+  }
+}
+
+/* AAL ENTERPRISES — FUTURISTIC JARVIS LOADER */
+
+.jarvis-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(28, 112, 72, 0.12) 0%,
+      transparent 55%),
+    #f7f8f2;
+  color: #075b3a;
+  font-family: Arial, sans-serif;
+}
+
+.jarvis-loader-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.jarvis-loader-content > span {
+  display: block;
+  margin-bottom: 28px;
+  color: #b78313;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.jarvis-core {
+  position: relative;
+  display: grid;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 30px;
+  place-items: center;
+}
+
+.jarvis-ring {
+  position: absolute;
+  border: 2px solid rgba(15, 112, 67, 0.35);
+  border-radius: 50%;
+}
+
+.jarvis-ring-outer {
+  inset: 0;
+  border-top-color: #d5a526;
+  border-right-color: #168653;
+  animation: jarvis-spin 5s linear infinite;
+}
+
+.jarvis-ring-middle {
+  inset: 15px;
+  border-width: 3px;
+  border-bottom-color: #d5a526;
+  border-left-color: #168653;
+  animation: jarvis-spin-reverse 3s linear infinite;
+}
+
+.jarvis-ring-inner {
+  inset: 32px;
+  border-style: dashed;
+  border-color: rgba(16, 124, 74, 0.65);
+  animation: jarvis-spin 9s linear infinite;
+}
+
+.jarvis-core-logo {
+  display: flex;
+  width: 76px;
+  height: 76px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid rgba(18, 133, 76, 0.45);
+  border-radius: 22px;
+  background: linear-gradient(145deg, #ffffff, #e8f5e9);
+  box-shadow:
+    0 0 20px rgba(25, 145, 80, 0.18),
+    inset 0 0 15px rgba(255, 211, 77, 0.16);
+  animation: jarvis-pulse 2s ease-in-out infinite;
+}
+
+.jarvis-core-logo span {
+  color: #087341;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.jarvis-core-logo small {
+  color: #a67b12;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.jarvis-scan-line {
+  position: absolute;
+  top: 10%;
+  left: 12%;
+  width: 76%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #e3b52f,
+    #19a667,
+    transparent
+  );
+  box-shadow: 0 0 12px rgba(20, 165, 100, 0.7);
+  animation: jarvis-scan 2.4s ease-in-out infinite;
+}
+
+.jarvis-title {
+  margin: 0 0 12px;
+  color: #075b3a;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.jarvis-loader-content p {
+  margin: 0;
+  color: #607468;
+  font-size: 13px;
+}
+
+.jarvis-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #20a568;
+  box-shadow: 0 0 10px rgba(32, 165, 104, 0.7);
+  animation: jarvis-pulse 1.5s ease-in-out infinite;
+}
+
+.jarvis-loader-content > div:last-child {
+  margin-top: 24px;
+  color: #829186;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.jarvis-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(22, 116, 68, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 116, 68, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+}
+
+@keyframes jarvis-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes jarvis-spin-reverse {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes jarvis-pulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.045);
+  }
+}
+
+@keyframes jarvis-scan {
+  0%, 100% { top: 10%; opacity: 0.3; }
+  50% { top: 88%; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jarvis-ring,
+  .jarvis-core-logo,
+  .jarvis-scan-line,
+  .jarvis-status-dot {
+    animation: none !important;
+  }
+}

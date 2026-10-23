@@ -1,6 +1,6 @@
 import "./mobile-responsive-overrides.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./App.css";
 
@@ -15,6 +15,8 @@ function App() {
   const [mobile, setMobile] = useState("");
 
   const [loggedIn, setLoggedIn] = useState(false);
+
+  const [sessionChecking, setSessionChecking] = useState(true);
 
   const [sessionToken, setSessionToken] = useState("");
 
@@ -55,6 +57,59 @@ function App() {
   const [customerName, setCustomerName] = useState("");
 
   const [customerMobile, setCustomerMobile] = useState("");
+
+  
+
+  useEffect(() => {
+  let cancelled = false;
+
+  async function restoreSession() {
+    try {
+      const savedSession = localStorage.getItem("aal_session");
+
+      if (!savedSession) return;
+
+      const session = JSON.parse(savedSession);
+
+      if (
+        !session.sessionToken ||
+        !session.expiresAt ||
+        Date.now() >= session.expiresAt
+      ) {
+        localStorage.removeItem("aal_session");
+        return;
+      }
+
+      const result = await apiRequest({
+        action: "products",
+        sessionToken: session.sessionToken,
+      });
+
+      if (cancelled) return;
+
+      if (!result.success) {
+        localStorage.removeItem("aal_session");
+        return;
+      }
+
+      setSessionToken(session.sessionToken);
+      setProducts(result.products || []);
+      setLoggedIn(true);
+    } catch (error) {
+      console.error("Session restore failed:", error);
+    } finally {
+      if (!cancelled) {
+        setSessionChecking(false);
+      }
+    }
+  }
+
+  restoreSession();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
 
   async function apiRequest(payload) {
 
@@ -101,6 +156,14 @@ function App() {
       }
 
       setSessionToken(result.sessionToken);
+
+      localStorage.setItem(
+  "aal_session",
+  JSON.stringify({
+    sessionToken: result.sessionToken,
+    expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+  })
+);
 
       const productResult = await apiRequest({
 
@@ -191,7 +254,7 @@ async function loadMyOrders() {
       // Local logout still proceeds if the network is unavailable.
 
     }
-
+    localStorage.removeItem("aal_session");
     setLoggedIn(false);
 
     setSessionToken("");
@@ -214,45 +277,121 @@ function openProductDetails(product) {
   setDetailsImageIndex(0);
   setMessage("");
 }
-  function addToCart(product) {
+  
+function addToCart(product, event) {
+  if (Number(product.stockQty) <= 0) {
+    setMessage("This product is currently out of stock.");
+    return;
+  }
 
-    if (Number(product.stockQty) <= 0) {
+  const button = event?.currentTarget;
+  const cartButton = document.querySelector(".cart-header-button");
 
-      setMessage("This product is currently out of stock.");
+  // Start the flying product image animation.
+  const productCard = button?.closest(".product-card");
+  const sourceImage =
+    productCard?.querySelector(".product-image img") ||
+    document.querySelector(".details-main-image img");
 
-      return;
+  if (sourceImage && cartButton) {
+    const start = sourceImage.getBoundingClientRect();
+    const end = cartButton.getBoundingClientRect();
 
-    }
+    const flyingImage = sourceImage.cloneNode(true);
 
-    setCart((current) => {
-
-      const existing = current.find((item) => item.product.productId === product.productId);
-
-      if (existing) {
-
-        if (existing.quantity >= Number(product.stockQty)) return current;
-
-        return current.map((item) => item.product.productId === product.productId
-
-          ? { ...item, quantity: item.quantity + 1 } : item);
-
-      }
-
-      return [...current, { product, quantity: 1 }];
-
+    Object.assign(flyingImage.style, {
+      position: "fixed",
+      left: `${start.left}px`,
+      top: `${start.top}px`,
+      width: `${start.width}px`,
+      height: `${start.height}px`,
+      objectFit: "contain",
+      zIndex: "99999",
+      pointerEvents: "none",
+      borderRadius: "10px",
+      boxShadow: "0 0 18px rgba(255, 204, 0, 0.7)",
+      margin: "0",
     });
 
-    setMessage(`${product.itemName} added to cart.`);
+    document.body.appendChild(flyingImage);
 
-setMessage(`${product.itemName} added to cart.`);
+    const deltaX =
+      end.left + end.width / 2 - (start.left + start.width / 2);
 
-setTimeout(() => {
+    const deltaY =
+      end.top + end.height / 2 - (start.top + start.height / 2);
 
-  setMessage("");
+    const animation = flyingImage.animate(
+      [
+        {
+          transform: "translate(0, 0) scale(1)",
+          opacity: 1,
+          filter: "drop-shadow(0 0 5px rgba(255, 204, 0, 0.5))",
+        },
+        {
+          transform: `translate(${deltaX * 0.55}px, ${deltaY * 0.55 - 70}px) scale(0.55)`,
+          opacity: 0.95,
+          offset: 0.65,
+        },
+        {
+          transform: `translate(${deltaX}px, ${deltaY}px) scale(0.12)`,
+          opacity: 0.15,
+          filter: "drop-shadow(0 0 12px rgba(255, 204, 0, 1))",
+        },
+      ],
+      {
+        duration: 900,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        fill: "forwards",
+      }
+    );
 
-}, 3000);
+    animation.onfinish = () => {
+      flyingImage.remove();
 
+      cartButton.classList.remove("cart-fly-bounce");
+
+      // Restart the bounce animation.
+      void cartButton.offsetWidth;
+
+      cartButton.classList.add("cart-fly-bounce");
+
+      window.setTimeout(() => {
+        cartButton.classList.remove("cart-fly-bounce");
+      }, 500);
+    };
+
+    animation.oncancel = () => flyingImage.remove();
   }
+
+  setCart((current) => {
+    const existing = current.find(
+      (item) => item.product.productId === product.productId
+    );
+
+    if (existing) {
+      if (existing.quantity >= Number(product.stockQty)) {
+        return current;
+      }
+
+      return current.map((item) =>
+        item.product.productId === product.productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+    }
+
+    return [...current, { product, quantity: 1 }];
+  });
+
+  setMessage(`CART_ADDED:${product.itemName}`);
+
+ window.setTimeout(() => {
+  setMessage((current) =>
+    current === `CART_ADDED:${product.itemName}` ? "" : current
+  );
+}, 2200);
+}
 
   function changeCartQuantity(productId, nextQuantity) {
 
@@ -274,91 +413,101 @@ setTimeout(() => {
 
   }
 
-  async function submitCartOrder() {
 
-    if (!cart.length) return;
+async function submitCartOrder() {
+  if (!cart.length) return;
 
-    if (!customerName.trim()) { setMessage("Please enter your name."); return; }
-
-    if (!/^\d{10}$/.test(customerMobile)) { setMessage("Enter a valid 10-digit mobile number."); return; }
-
-    setCartSubmitting(true);
-
-    setMessage("");
-
-    const results = [];
-
-    try {
-
-      for (const item of cart) {
-
-        const result = await apiRequest({
-
-          action: "order", sessionToken,
-
-          productId: item.product.productId,
-
-          quantity: item.quantity,
-
-          customerName: customerName.trim(),
-
-          customerMobile: customerMobile.trim(),
-
-        });
-
-        results.push({ item, result });
-
-        if (!result.success) break;
-
-      }
-
-      const successful = results.filter((entry) => entry.result.success);
-
-      if (successful.length === cart.length) {
-
-  setMessage(
-
-    `SUCCESS: ${successful.length} product order request(s) submitted. Request IDs: ${successful.map((entry) => entry.result.requestId).join(", ")}`
-
+  const cartTotal = cart.reduce(
+    (sum, item) =>
+      sum +
+      Number(item.product.retailPrice || 0) *
+        Number(item.quantity || 0),
+    0
   );
 
-  setCart([]);
+  if (cartTotal < 1500) {
+    setMessage(
+      `Minimum order value is ₹1,500. Add ₹${Math.ceil(
+        1500 - cartTotal
+      ).toLocaleString("en-IN")} more to continue.`
+    );
+    return;
+  }
 
-  setShowCart(false);
+  if (!customerName.trim()) {
+    setMessage("Please enter your name.");
+    return;
+  }
 
-  setTimeout(() => {
+  if (!/^[6-9]\d{9}$/.test(customerMobile.trim())) {
+    setMessage("Enter a valid 10-digit mobile number.");
+    return;
+  }
 
-    setMessage("");
+  // Validate quantities before sending the cart.
+  for (const item of cart) {
+    const quantity = Number(item.quantity);
+    const stock = Number(item.product.stockQty);
 
-  }, 5000);
-
-} else {
-
-        const failed = results.find((entry) => !entry.result.success);
-
-        setMessage(`${successful.length} of ${cart.length} request(s) submitted. ${failed?.result?.message || "Please check your order requests."}`);
-
-        if (successful.length) {
-
-          const doneIds = new Set(successful.map((entry) => entry.item.product.productId));
-
-          setCart((current) => current.filter((item) => !doneIds.has(item.product.productId)));
-
-        }
-
-      }
-
-    } catch {
-
-      setMessage("Connection issue while submitting cart. Please check your order requests before retrying.");
-
-    } finally {
-
-      setCartSubmitting(false);
-
+    if (!Number.isSafeInteger(quantity) || quantity < 1) {
+      setMessage("Please enter a valid quantity for every product.");
+      return;
     }
 
+    if (Number.isFinite(stock) && quantity > stock) {
+      setMessage(
+        `Requested quantity exceeds available stock for ${
+          item.product.itemName || "a product"
+        }.`
+      );
+      return;
+    }
   }
+
+  setCartSubmitting(true);
+  setMessage("");
+
+  try {
+    const result = await apiRequest({
+      action: "cartOrder",
+      sessionToken,
+      customerName: customerName.trim(),
+      customerMobile: customerMobile.trim(),
+      items: cart.map((item) => ({
+        productId: item.product.productId,
+        quantity: Number(item.quantity),
+      })),
+    });
+
+    if (result.success) {
+      const requestIds = Array.isArray(result.requestIds)
+        ? result.requestIds.join(", ")
+        : "";
+
+      setMessage(
+        `SUCCESS: ${result.message || "Cart order submitted."}${
+          requestIds ? ` Request IDs: ${requestIds}` : ""
+        }`
+      );
+
+      setCart([]);
+      setShowCart(false);
+
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
+    } else {
+      setMessage(result.message || "Order request failed.");
+    }
+  } catch {
+    setMessage(
+      "Connection issue while submitting cart. Please check My Orders before retrying."
+    );
+  } finally {
+    setCartSubmitting(false);
+  }
+}
+
 
   async function submitRequest(outOfStock = false) {
 
@@ -556,9 +705,58 @@ const catalogueSource =
 
     .map(({ product }) => product);
 
+    if (sessionChecking) {
+return (
+  <main className="jarvis-loader">
+    <div className="jarvis-grid" aria-hidden="true" />
+
+    <div className="jarvis-loader-content">
+      <div className="jarvis-status">
+        <span className="jarvis-status-dot" />
+        AAL ENTERPRISES <span>•</span> SYSTEM ONLINE
+      </div>
+
+      <div
+        className="jarvis-core"
+        role="status"
+        aria-label="Checking your session"
+      >
+        <div className="jarvis-ring jarvis-ring-outer" />
+        <div className="jarvis-ring jarvis-ring-middle" />
+        <div className="jarvis-ring jarvis-ring-inner" />
+
+        <div className="jarvis-scan-line" />
+
+        <div className="jarvis-core-logo">
+          <span>AAL</span>
+          <small>SECURE</small>
+        </div>
+      </div>
+
+      <h2 className="jarvis-title">INITIALIZING ACCESS</h2>
+
+      <p className="jarvis-description">
+        Verifying your session...
+      </p>
+
+      <div className="jarvis-progress">
+        <div className="jarvis-progress-fill" />
+      </div>
+
+      <div className="jarvis-footer">
+        <span>SESSION AUTHENTICATION</span>
+        <span className="jarvis-live">● LIVE</span>
+      </div>
+    </div>
+  </main>
+);
+    }
+
 if (!loggedIn) {
 
   return (
+
+    
 
     <main className="login-preview">
 
@@ -867,11 +1065,10 @@ if (!loggedIn) {
       </div>
     );
   })()}
-</div>
+    </div>
 
-            </div>
+    <div className="product-details-info">
 
-            <div className="product-details-info">
               <p className="product-id-label details-product-id">
   Product ID: {detailsProduct.productId}
 </p>
@@ -899,9 +1096,9 @@ if (!loggedIn) {
 
               {Number(detailsProduct.stockQty || 0) > 0 ? (
                 <button
-                  className="cart-add-button"
-                  onClick={() => addToCart(detailsProduct)}
-                >
+  className="cart-add-button"
+  onClick={(event) => addToCart(detailsProduct, event)}
+>
                   + Add to Cart
                 </button>
               ) : null}
@@ -920,7 +1117,8 @@ if (!loggedIn) {
               </button>
 
             </div>
-        </section>
+</div>
+</section>
          )}
 
       {activePage === "myOrders" && (
@@ -971,37 +1169,67 @@ if (!loggedIn) {
 
               <div className="product-grid">
 
-                {myOrders.map((order) => (
+               {myOrders.map((order) => (
+  <article className="my-order-card" key={order.requestId}>
+    <div className="my-order-header">
+      <div className="my-order-reference">
+        <span className="my-order-label">ORDER REFERENCE</span>
+        <strong>{order.requestId}</strong>
+      </div>
 
-                  <article className="my-order-card" key={order.requestId}>
+      <span
+        className={`my-order-status status-${String(
+          order.requestStatus || "Pending"
+        )
+          .toLowerCase()
+          .replace(/\s+/g, "-")}`}
+      >
+        {order.requestStatus || "Pending"}
+      </span>
+    </div>
 
-                    <div className="product-info">
+    <div className="my-order-product">
+      <div className="my-order-product-icon" aria-hidden="true">
+        📦
+      </div>
 
-                      <p className="category-label">{order.requestId}</p>
+      <div className="my-order-product-info">
+        <h3>{order.itemName}</h3>
+        <p>
+          Quantity: <strong>{order.quantity}</strong>
+        </p>
+      </div>
 
-                      <h3>{order.itemName}</h3>
+      <div className="my-order-price">
+        <span>Price per item</span>
+        <strong>
+          ₹{Number(order.retailPrice || 0).toLocaleString("en-IN")}
+        </strong>
 
-                      <p>Quantity: {order.quantity}</p>
+        <span className="my-order-total-label">Total Value</span>
+        <strong className="my-order-total-value">
+          ₹
+          {(
+            Number(order.retailPrice || 0) *
+            Number(order.quantity || 0)
+          ).toLocaleString("en-IN")}
+        </strong>
+      </div>
+    </div>
 
-                      <p>Customer: {order.customerName}</p>
+    <div className="my-order-customer">
+      <div>
+        <span>Customer</span>
+        <strong>{order.customerName || "—"}</strong>
+      </div>
 
-                      <p>Mobile: {order.customerMobile}</p>
-
-                      <p>
-
-                        Price: ₹
-
-                        {Number(order.retailPrice).toLocaleString("en-IN")}
-
-                      </p>
-
-                      <p>Status: {order.requestStatus || "Pending"}</p>
-
-                    </div>
-
-                  </article>
-
-                ))}
+      <div>
+        <span>Mobile Number</span>
+        <strong>{order.customerMobile || "—"}</strong>
+      </div>
+    </div>
+  </article>
+))}
 
               </div>
 
@@ -1194,7 +1422,74 @@ if (!loggedIn) {
 
       )}
 
-      {message && <p className="message">{message}</p>}
+      
+    
+{message && (
+  message.startsWith("SUCCESS:") ? (
+    <div className="aal-success-card" role="status" aria-live="polite">
+      <div className="aal-success-icon" aria-hidden="true">
+        ✓
+      </div>
+
+      <div className="aal-success-content">
+        <span className="aal-success-label">AAL ENTERPRISES</span>
+
+        <h3>Order Request Submitted!</h3>
+
+        <p>
+          Your order requests have been submitted successfully.
+          You can track their status in My Orders.
+        </p>
+
+        {(() => {
+          const idsMatch = message.match(/Request IDs:\s*(.+)$/);
+          const requestIds = idsMatch
+            ? idsMatch[1].split(",").map((id) => id.trim()).filter(Boolean)
+            : [];
+
+          return requestIds.length > 0 ? (
+            <div className="aal-order-references">
+              <span className="aal-reference-title">ORDER REFERENCE</span>
+
+              <div className="aal-reference-list">
+                {requestIds.map((id) => (
+                  <span className="aal-reference-badge" key={id}>
+                    {id}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null;
+        })()}
+      </div>
+
+      <button
+        type="button"
+        className="aal-success-close"
+        onClick={() => setMessage("")}
+        aria-label="Dismiss success message"
+      >
+        ×
+      </button>
+     </div>
+  ) : (
+    message.startsWith("CART_ADDED:") ? (
+    <div className="aal-cart-toast" role="status" aria-live="polite">
+      <span className="aal-cart-toast-check">✓</span>
+
+      <div className="aal-cart-toast-text">
+        <strong>Added to Cart!</strong>
+        <span>{message.slice("CART_ADDED:".length)}</span>
+      </div>
+    </div>
+  ) : (
+    <p className="message">{message}</p>
+  )
+  )
+)}
+
+  
+
 
       {activePage !== "myOrders" && !detailsProduct && (
   <section className="catalogue">
@@ -1360,7 +1655,10 @@ onError={(e) => {
 
                   {Number(product.stockQty) > 0 && (
 
-                    <button className="cart-add-button" onClick={() => addToCart(product)}>+ Add to Cart</button>
+                   <button
+  className="cart-add-button"
+  onClick={(event) => addToCart(product, event)}
+>+ Add to Cart</button>
 
                   )}
 
@@ -1574,6 +1872,33 @@ onError={(e) => {
 
               <div className="cart-total"><span>Estimated total</span><strong>₹{cart.reduce((sum, item) => sum + Number(item.product.retailPrice || 0) * item.quantity, 0).toLocaleString("en-IN")}</strong></div>
 
+              
+{(() => {
+  const cartTotal = cart.reduce(
+    (sum, item) =>
+      sum +
+      Number(item.product.retailPrice || 0) * Number(item.quantity || 0),
+    0
+  );
+  const remaining = Math.max(0, 1500 - cartTotal);
+
+  return (
+    <div className={`minimum-order-notice ${remaining === 0 ? "reached" : ""}`}>
+      <strong>
+        {remaining > 0
+          ? "Minimum order not reached"
+          : "Minimum order reached"}
+      </strong>
+      <p>
+        {remaining > 0
+          ? `Minimum order value is ₹1,500. Add ₹${remaining.toLocaleString("en-IN")} more to continue.`
+          : "Your cart meets the minimum order value of ₹1,500."}
+      </p>
+    </div>
+  );
+})()}
+
+
               <p className="muted cart-note">Each product is submitted as a separate order request. Final stock and price are checked by the backend.</p>
 
               <label htmlFor="cartCustomerName">Customer Name</label>
@@ -1584,7 +1909,35 @@ onError={(e) => {
 
               <input id="cartCustomerMobile" type="tel" value={customerMobile} onChange={(e) => setCustomerMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} placeholder="10-digit mobile number" inputMode="numeric" maxLength={10} />
 
-              <button className="primary-button" disabled={cartSubmitting || cart.length === 0} onClick={submitCartOrder}>{cartSubmitting ? "Submitting requests..." : "Submit all order requests"}</button>
+             
+<button
+  className={`primary-button ${
+    cart.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.product.retailPrice || 0) *
+          Number(item.quantity || 0),
+      0
+    ) < 1500
+      ? "minimum-order-pending"
+      : "minimum-order-ready"
+  }`}
+  disabled={
+    cartSubmitting ||
+    cart.length === 0 ||
+    cart.reduce(
+      (sum, item) =>
+        sum +
+        Number(item.product.retailPrice || 0) *
+          Number(item.quantity || 0),
+      0
+    ) < 1500
+  }
+  onClick={submitCartOrder}
+>
+  {cartSubmitting ? "Submitting..." : "Submit all order requests"}
+</button>
+
 
             </>}
 
@@ -1769,5 +2122,4 @@ function getDisplayImageUrl(url) {
   return value;
 
 }
-
 export default App;
